@@ -5,3 +5,5 @@ A tested, modular decoder-only transformer implemented with PyTorch tensor opera
 ## Documentation
 
 - [Project design](docs/design.md) — Approved architecture, implementation boundaries, testing strategy, and reproducibility requirements
+
+- [Corpus preparation](data/README.md) - Corpus preparation workflow, sources, and rules

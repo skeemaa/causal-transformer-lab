@@ -9,7 +9,7 @@ V0.1.0 will contain the following:
 - Corpus preparation and a character tokenizer
 - Training-sequence and mini-batch construction
 - Decoder-only transformer components
-- Training and validation loops
+- Training and validation loops, with separate final test evaluation
 - Autoregressive generation with greedy, temperature, and top-k sampling
 - Checkpoint save/restore
 - `micro`, `tiny`, and optional `small` configurations
@@ -60,7 +60,7 @@ Model architecture settings will remain separate from training settings such as 
 
 ## Implementation Boundary
 
-The transformer architecture and its data flow are assembled explicitly from lower-level PyTorch components. We do not reimplementing tensor operations, automatic differentiation, or numerical kernels.
+The transformer architecture and its data flow are assembled explicitly from lower-level PyTorch components. We do not reimplement tensor operations, automatic differentiation, or numerical kernels.
 
 ### Permitted PyTorch Building Blocks
 
@@ -131,9 +131,16 @@ Corpus preparation will record:
 - Cleaning and normalization rules
 - Character vocabulary
 - Work concatenation order
-- Deterministic training and validation split procedure
+- Deterministic training, validation, and test split procedure
 
 The cleaned corpus will be committed to the repository for reproducibility but excluded from the installable Python wheel. Exact source editions, cleaning rules, and split behavior will be selected and documented during the corpus-preparation milestone. Source or preprocessing changes must update the corresponding hashes and documentation.
+
+Each normalized work is split independently in its original character order.
+For a work containing N characters, training ends at N * 8 // 10 and
+validation ends at N * 9 // 10; the remaining characters form the test
+portion. Corresponding portions are combined separately in the fixed
+source order. Validation guides development and checkpoint selection.
+The test set is reserved for final evaluation after model choices are settled.
 
 ## Testing Strategy
 

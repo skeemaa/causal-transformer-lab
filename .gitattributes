@@ -1,0 +1,5 @@
+# Preserve reproducible corpus bytes on checkout.
+/data/processed/*.txt text eol=lf
+/data/processed/*.json text eol=lf
+/data/sources.json text eol=lf
+/data/processed/*.txt whitespace=-blank-at-eol

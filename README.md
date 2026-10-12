@@ -19,9 +19,9 @@ from causal_transformer_lab.tokenizer import CharacterTokenizer
 
 tokenizer = CharacterTokenizer("banana")
 
-print(tokenizer.vocabulary)                    # ("a", "b", "n")
-print(tokenizer.encode("banana"))              # [1, 0, 2, 0, 2, 0]
-print(tokenizer.decode([1, 0, 2, 0, 2, 0]))    # banana
+print(tokenizer.vocabulary)  # ("a", "b", "n")
+print(tokenizer.encode("banana"))  # [1, 0, 2, 0, 2, 0]
+print(tokenizer.decode([1, 0, 2, 0, 2, 0]))  # banana
 ```
 
 Encoding and decoding preserve character order, repetitions, whitespace, and

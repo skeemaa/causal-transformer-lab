@@ -1,3 +1,5 @@
+"""Tests for corpus preparation."""
+
 import hashlib
 import json
 

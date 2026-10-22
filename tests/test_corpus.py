@@ -1,3 +1,5 @@
+"""Tests for corpus handling."""
+
 import pytest
 
 from causal_transformer_lab.corpus import (

@@ -79,3 +79,54 @@ Both functions require a positive context length and enough source tokens
 for a complete window. `get_window` also requires a valid, nonnegative
 start; `sample_batch` requires a positive batch size. Invalid requests
 raise `ValueError`.
+
+## Model configuration
+
+`ModelConfig` stores vocabulary size, maximum context length, embedding
+dimension, attention head count, decoder layer count, and dropout probability.
+Configurations are frozen after construction and remain separate from training
+settings such as batch size and learning rate.
+
+Use `get_model_config("micro", vocab_size=...)` to select a named preset.
+The supported names are `micro`, `tiny`, and `small`; their architecture
+settings are listed in [Project design](docs/design.md).
+Vocabulary size comes from the tokenizer rather than the preset.
+
+Dimensions and counts must be positive, the embedding dimension must be
+divisible by the head count, and dropout must be between zero and one,
+inclusive. Invalid settings and unknown preset names raise `ValueError`.
+Dimension and count arguments are expected to be integers.
+
+## Token and positional embeddings
+
+`TokenPositionEmbedding` combines learned token vectors with learned absolute
+position vectors, then applies embedding dropout. Input token IDs have shape
+`(B, T)`; output representations have shape `(B, T, C)`.
+
+```python
+import torch
+
+from causal_transformer_lab.config import get_model_config
+from causal_transformer_lab.embeddings import TokenPositionEmbedding
+from causal_transformer_lab.tokenizer import CharacterTokenizer
+
+tokenizer = CharacterTokenizer("banana")
+config = get_model_config("micro", vocab_size=len(tokenizer.vocabulary))
+embeddings = TokenPositionEmbedding(config)
+
+token_ids = torch.tensor([tokenizer.encode("banana")], dtype=torch.long)
+output = embeddings(token_ids)
+
+print(token_ids.shape)  # torch.Size([1, 6])
+print(output.shape)  # torch.Size([1, 6, 64])
+```
+
+The token table has shape `(V, C)` and the position table has shape
+`(context_length, C)`. Position numbering starts at zero for each input
+window, and the same position vectors are added across batch rows.
+Sequences longer than the configured context raise `ValueError`.
+
+Supply two-dimensional `torch.long` inputs containing valid vocabulary IDs.
+The component and inputs must be on the same device. Both embedding tables
+are learned during training. Calling `embeddings.eval()` disables dropout;
+calling `embeddings.train()` enables it.
